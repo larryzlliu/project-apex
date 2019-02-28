@@ -18,54 +18,21 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val speechUtil = ApexSpeechUtil(context = this, processedTextlistener = this::setTextView)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         checkPermission()
 
-        val mSpeechRecognizer: SpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-
-        val mSpeechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
-                Locale.getDefault())
-        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
-                5000)
-
-        // TODO: extract to separate class
-        mSpeechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(p0: Bundle?) {}
-
-            override fun onRmsChanged(v: Float) {}
-
-            override fun onBufferReceived(bytes: ByteArray?) {}
-
-            override fun onPartialResults(bundle: Bundle?) {}
-
-            override fun onEvent(i: Int, bundle: Bundle?) {}
-
-            override fun onBeginningOfSpeech() {}
-
-            override fun onEndOfSpeech() {}
-
-            override fun onError(i: Int) {}
-
-            override fun onResults(bundle: Bundle?) {
-                val matches = bundle?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!!
-                this@MainActivity.text_view.text = matches[0]
-            }
-
-        })
-
-        this.button_record_toggle.setOnCheckedChangeListener { _, isRecording ->
+        button_record_toggle.setOnCheckedChangeListener { _ , isRecording ->
             if (isRecording) {
                 Toast.makeText(this, "Recording...", Toast.LENGTH_LONG).show()
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent)
+                speechUtil.startListening()
             } else {
                 Toast.makeText(this, "Stopping...", Toast.LENGTH_LONG).show()
-                mSpeechRecognizer.stopListening()
+                speechUtil.stopListening()
 
             }
         }
@@ -79,6 +46,10 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
+    }
+
+    private fun setTextView(speechText: String) {
+        text_view.text = speechText
     }
 
 }
