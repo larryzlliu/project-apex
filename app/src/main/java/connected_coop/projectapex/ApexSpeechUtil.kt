@@ -44,6 +44,7 @@ class ApexSpeechUtil(context: Context, processedTextlistener: (String) -> Unit) 
 
             override fun onResults(bundle: Bundle?) {
                 val speechToText = bundle!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)[0]
+                speechText = speechToText
                 processedTextlistener.invoke(speechToText)
             }
 
