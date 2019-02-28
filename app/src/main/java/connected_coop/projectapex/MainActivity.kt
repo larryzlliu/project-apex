@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
                 Locale.getDefault())
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
-                5000)
+                50000)
 
         // TODO: extract to separate class
         mSpeechRecognizer.setRecognitionListener(object : RecognitionListener {
@@ -50,24 +50,31 @@ class MainActivity : AppCompatActivity() {
 
             override fun onEndOfSpeech() {}
 
-            override fun onError(i: Int) {}
+            override fun onError(i: Int) {
+                // TODO: maybe some pop up modal
+            }
 
             override fun onResults(bundle: Bundle?) {
                 val matches = bundle?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)!!
                 this@MainActivity.text_view.text = matches[0]
             }
-
         })
 
-        this.button_record_toggle.setOnCheckedChangeListener { _, isRecording ->
+        button_record_toggle.setOnCheckedChangeListener { _, isRecording ->
             if (isRecording) {
                 Toast.makeText(this, "Recording...", Toast.LENGTH_LONG).show()
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent)
             } else {
                 Toast.makeText(this, "Stopping...", Toast.LENGTH_LONG).show()
                 mSpeechRecognizer.stopListening()
-
             }
+        }
+
+        result_button.setOnClickListener { _ ->
+            Toast.makeText(this, "starting activity", Toast.LENGTH_SHORT).show()
+            // TODO: start result activity
+            val intent = Intent(this, ResultActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -82,3 +89,4 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
