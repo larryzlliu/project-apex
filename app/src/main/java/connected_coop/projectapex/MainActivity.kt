@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         checkPermission()
-
         button_record_toggle.setOnCheckedChangeListener { _ , isRecording ->
             if (isRecording) {
                 Toast.makeText(this, "Recording...", Toast.LENGTH_LONG).show()
@@ -33,8 +32,14 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Stopping...", Toast.LENGTH_LONG).show()
                 speechUtil.stopListening()
-
             }
+        }
+
+        result_button.setOnClickListener { _ ->
+            Toast.makeText(this, "starting activity", Toast.LENGTH_SHORT).show()
+            // TODO: start result activity
+            val intent = Intent(this, ResultActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -53,3 +58,4 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
+
