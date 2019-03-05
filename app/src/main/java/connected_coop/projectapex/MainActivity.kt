@@ -6,32 +6,31 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val speechUtil = ApexSpeechUtil(context = this, processedTextlistener = this::setTextView)
+    private val speechListener = SpeechRecognitionListener(context = this, processedTextlistener = this::setTextView)
+    private val speechUtil = SpeechUtil()
+
+    private var speechText : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         checkPermission()
-        button_record_toggle.setOnCheckedChangeListener { _ , isRecording ->
+        button_record_toggle.setOnCheckedChangeListener { _, isRecording ->
             if (isRecording) {
                 Toast.makeText(this, "Recording...", Toast.LENGTH_LONG).show()
-                speechUtil.startListening()
+                speechListener.startListening()
             } else {
                 Toast.makeText(this, "Stopping...", Toast.LENGTH_LONG).show()
-                speechUtil.stopListening()
+                speechListener.stopListening()
             }
         }
 
@@ -50,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
     }
 
     private fun setTextView(speechText: String) {

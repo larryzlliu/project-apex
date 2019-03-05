@@ -8,12 +8,11 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import java.util.*
 
-class ApexSpeechUtil(context: Context, processedTextlistener: (String) -> Unit) {
+class SpeechRecognitionListener(context: Context, processedTextlistener: (String) -> Unit) {
 
     companion object {
         private const val TIME_UNTIL_TIMEOUT = 50000
         private const val MS_TO_SECONDS = 1000
-        private const val SECONDS_TO_MIN = 60
     }
 
     // Speech to text:
@@ -21,7 +20,6 @@ class ApexSpeechUtil(context: Context, processedTextlistener: (String) -> Unit) 
     private val speechRecognizer: SpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
     private var startTime: Long = -1
     private var totalCurrentSpeechDuration: Float = 0.0f
-    private var speechText: String = ""
 
     init {
 
@@ -58,20 +56,6 @@ class ApexSpeechUtil(context: Context, processedTextlistener: (String) -> Unit) 
     fun stopListening() {
         speechRecognizer.stopListening()
         totalCurrentSpeechDuration = ((System.currentTimeMillis() - startTime)/MS_TO_SECONDS).toFloat()
-    }
-
-    // Metrics:
-
-    fun calculateWPM(): Float {
-        if(speechText.isNullOrBlank()) {
-            throw RuntimeException("You need to have recorded a speech in order to calculate the WPM!")
-        }
-        val numWords = speechText.split("\\s+").size
-        return numWords / totalCurrentSpeechDuration / SECONDS_TO_MIN
-    }
-
-    fun getTotalSpeechDuration(): Float {
-        return totalCurrentSpeechDuration
     }
 
     private fun createRecognitionIntent(): Intent {
