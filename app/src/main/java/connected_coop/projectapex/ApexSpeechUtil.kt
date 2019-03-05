@@ -8,7 +8,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import java.util.*
 
-class ApexSpeechUtil(context: Context, processedTextlistener: (String) -> Unit) {
+class ApexSpeechUtil(context: Context, val processedTextlistener: (String) -> Unit) {
 
     companion object {
         private const val TIME_UNTIL_TIMEOUT = 50000
@@ -24,31 +24,7 @@ class ApexSpeechUtil(context: Context, processedTextlistener: (String) -> Unit) 
     private var speechText: String = ""
 
     init {
-
-        speechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(p0: Bundle?) {}
-
-            override fun onRmsChanged(v: Float) {}
-
-            override fun onBufferReceived(bytes: ByteArray?) {}
-
-            override fun onPartialResults(bundle: Bundle?) {}
-
-            override fun onEvent(i: Int, bundle: Bundle?) {}
-
-            override fun onBeginningOfSpeech() {}
-
-            override fun onEndOfSpeech() {}
-
-            override fun onError(i: Int) {}
-
-            override fun onResults(bundle: Bundle?) {
-                val speechToText = bundle!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)[0]
-                speechText = speechToText
-                processedTextlistener.invoke(speechToText)
-            }
-
-        })
+        speechRecognizer.setRecognitionListener(ApexRecognitionListener())
     }
 
     fun startListening() {
@@ -86,4 +62,27 @@ class ApexSpeechUtil(context: Context, processedTextlistener: (String) -> Unit) 
         return speechRecognizerIntent
     }
 
+    inner class ApexRecognitionListener: RecognitionListener {
+        override fun onReadyForSpeech(p0: Bundle?) {}
+
+        override fun onRmsChanged(v: Float) {}
+
+        override fun onBufferReceived(bytes: ByteArray?) {}
+
+        override fun onPartialResults(bundle: Bundle?) {}
+
+        override fun onEvent(i: Int, bundle: Bundle?) {}
+
+        override fun onBeginningOfSpeech() {}
+
+        override fun onEndOfSpeech() {}
+
+        override fun onError(i: Int) {}
+
+        override fun onResults(bundle: Bundle?) {
+            val speechToText = bundle!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)[0]
+            speechText = speechToText
+            processedTextlistener.invoke(speechToText)
+        }
+    }
 }
