@@ -48,6 +48,9 @@ class ApexSpeechUtil(context: Context, val processedTextlistener: (String) -> Un
     }
 
     fun getTotalSpeechDuration(): Float {
+        if(speechText.isNullOrBlank()) {
+            throw RuntimeException("You need to have recorded a speech in order to calculate the WPM!")
+        }
         return totalCurrentSpeechDuration
     }
 
