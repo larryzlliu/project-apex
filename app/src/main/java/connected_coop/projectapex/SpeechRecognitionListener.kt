@@ -22,30 +22,7 @@ class SpeechRecognitionListener(context: Context, processedTextlistener: (String
     private var totalCurrentSpeechDuration: Float = 0.0f
 
     init {
-
-        speechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(p0: Bundle?) {}
-
-            override fun onRmsChanged(v: Float) {}
-
-            override fun onBufferReceived(bytes: ByteArray?) {}
-
-            override fun onPartialResults(bundle: Bundle?) {}
-
-            override fun onEvent(i: Int, bundle: Bundle?) {}
-
-            override fun onBeginningOfSpeech() {}
-
-            override fun onEndOfSpeech() {}
-
-            override fun onError(i: Int) {}
-
-            override fun onResults(bundle: Bundle?) {
-                val speechToText = bundle!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)[0]
-                processedTextlistener.invoke(speechToText)
-            }
-
-        })
+        speechRecognizer.setRecognitionListener(ApexRecognitionListener())
     }
 
     fun startListening() {
@@ -69,4 +46,27 @@ class SpeechRecognitionListener(context: Context, processedTextlistener: (String
         return speechRecognizerIntent
     }
 
+    inner class ApexRecognitionListener: RecognitionListener {
+        override fun onReadyForSpeech(p0: Bundle?) {}
+
+        override fun onRmsChanged(v: Float) {}
+
+        override fun onBufferReceived(bytes: ByteArray?) {}
+
+        override fun onPartialResults(bundle: Bundle?) {}
+
+        override fun onEvent(i: Int, bundle: Bundle?) {}
+
+        override fun onBeginningOfSpeech() {}
+
+        override fun onEndOfSpeech() {}
+
+        override fun onError(i: Int) {}
+
+        override fun onResults(bundle: Bundle?) {
+            val speechToText = bundle!!.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)[0]
+            speechText = speechToText
+            processedTextlistener.invoke(speechToText)
+        }
+    }
 }
