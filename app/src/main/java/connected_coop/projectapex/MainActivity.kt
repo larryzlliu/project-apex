@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -17,71 +18,50 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TableLayout
 import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.recording_page_layout.*
+import kotlinx.android.synthetic.main.fragment_past_recordings.*
+import kotlinx.android.synthetic.main.fragment_recording.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val speechListener = SpeechRecognitionListener(context = this, processedTextlistener = this::setTextView)
-    private val speechUtil = SpeechUtil()
-
-    private var speechText : String = ""
-    private var isRecording = false
-
-    // When requested, this adapter returns a DemoObjectFragment,
-    // representing an object in the collection.
-    private lateinit var demoCollectionPagerAdapter: DemoCollectionPagerAdapter
-    private lateinit var viewPager: ViewPager
-
-    // Since this is an object collection, use a FragmentStatePagerAdapter,
-// and NOT a FragmentPagerAdapter.
-    class DemoCollectionPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
-        override fun getItem(position: Int): Fragment {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun getCount(): Int {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        val toolbar = findViewById<android.support.v7.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         checkPermission()
-        button_record_toggle.setOnClickListener() {_ ->
-            toggleRecording()
-            if (isRecording) {
-                Toast.makeText(this, "Recording...", Toast.LENGTH_LONG).show()
-                speechListener.startListening()
-            } else {
-                Toast.makeText(this, "Stopping...", Toast.LENGTH_LONG).show()
-                speechListener.stopListening()
-            }
-        }
 
-        result_button.setOnClickListener { _ ->
-            Toast.makeText(this, "starting activity", Toast.LENGTH_SHORT).show()
-            // TODO: start result activity
-            val intent = Intent(this, ResultActivity::class.java)
-            startActivity(intent)
-        }
-    }
+        val tabLayout = findViewById<TabLayout>(R.id.tab_layout)
 
-    private fun toggleRecording() {
-        isRecording = !isRecording
-        if (isRecording) {
-            button_record_toggle.background = getDrawable(R.drawable.round_button_recording)
-        } else {
-            button_record_toggle.background = getDrawable(R.drawable.round_button)
-        }
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_recording))
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_past_recordings))
+        tabLayout.tabGravity = TabLayout.GRAVITY_FILL
+
+        val viewPager = findViewById<ViewPager>(R.id.pager)
+        val adapter = PageAdapter(supportFragmentManager, tabLayout.tabCount)
+        viewPager.adapter = adapter
+
+        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        tabLayout.addOnTabSelectedListener(
+                object : TabLayout.OnTabSelectedListener {
+                    override fun onTabReselected(tab: TabLayout.Tab?) {
+                        viewPager.currentItem = tab?.position ?: 1
+                    }
+
+                    override fun onTabUnselected(tab: TabLayout.Tab?) {
+                    }
+
+                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        viewPager.currentItem = tab?.position ?: 1
+                    }
+                }
+        )
     }
 
     //update to prompt user to update permissions
@@ -92,10 +72,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-    }
-
-    private fun setTextView(speechText: String) {
-        text_view.text = speechText
     }
 
 }
