@@ -6,10 +6,20 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.recording_page_layout.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -21,14 +31,31 @@ class MainActivity : AppCompatActivity() {
     private var speechText : String = ""
     private var isRecording = false
 
+    // When requested, this adapter returns a DemoObjectFragment,
+    // representing an object in the collection.
+    private lateinit var demoCollectionPagerAdapter: DemoCollectionPagerAdapter
+    private lateinit var viewPager: ViewPager
+
+    // Since this is an object collection, use a FragmentStatePagerAdapter,
+// and NOT a FragmentPagerAdapter.
+    class DemoCollectionPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+        override fun getItem(position: Int): Fragment {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun getCount(): Int {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i("MB", "Setting content to activity Main")
         setContentView(R.layout.activity_main)
 
-        Log.i("MB", "checking permissions")
+
+
         checkPermission()
-        Log.i("MB", "setting button")
         button_record_toggle.setOnClickListener() {_ ->
             toggleRecording()
             if (isRecording) {
@@ -40,7 +67,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        Log.i("MB", "setting results listener")
         result_button.setOnClickListener { _ ->
             Toast.makeText(this, "starting activity", Toast.LENGTH_SHORT).show()
             // TODO: start result activity
