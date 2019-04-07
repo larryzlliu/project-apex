@@ -12,7 +12,7 @@ class PageAdapter(
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 ->  RecordingPageFragment()
-            1 ->  ResultActivity()
+            1 ->  OldRecordingsPageFragment()
             else ->  RecordingPageFragment() //TODO : ERROR PAGE THIS CASE SHOULD NEVER HAPPEN
         }
     }

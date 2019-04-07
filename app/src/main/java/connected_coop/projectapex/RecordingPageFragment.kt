@@ -1,8 +1,14 @@
 package connected_coop.projectapex
 
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat.getDrawable
 import android.support.v7.widget.AppCompatImageButton
 import android.view.LayoutInflater
@@ -30,6 +36,8 @@ class RecordingPageFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        checkPermission()
+
         val view = inflater.inflate(R.layout.fragment_recording, container,false)
 
         speechListener = SpeechRecognitionListener(context = activity, processedTextlistener = this::setTextView)
@@ -63,4 +71,13 @@ class RecordingPageFragment : Fragment() {
         text_view.text = speechText
     }
 
+    //update to prompt user to update permissions
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse("package:" + activity.packageName))
+            startActivity(intent)
+            activity.finish()
+        }
+    }
 }
