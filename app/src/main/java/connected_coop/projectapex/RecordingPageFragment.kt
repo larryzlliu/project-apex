@@ -4,6 +4,7 @@ package connected_coop.projectapex
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -55,6 +56,22 @@ class RecordingPageFragment : Fragment() {
 
             }
         }
+
+        val discardButton = view.findViewById<Button>(R.id.discard_button)
+
+        discardButton.setOnClickListener { _ ->
+            speechText = ""
+            text_view.text = ""
+        }
+
+        val continueButton = view.findViewById<Button>(R.id.continue_button)
+
+        continueButton.setOnClickListener{ _ ->
+            val intent = Intent(activity, ResultsActivity::class.java)
+            //add speechListener util to intent
+            startActivity(intent)
+        }
+
         return view
     }
 
@@ -62,8 +79,13 @@ class RecordingPageFragment : Fragment() {
         isRecording = !isRecording
         if (isRecording) {
             button_record_toggle.background = getDrawable(resources, R.drawable.round_button_recording, null)
+            recording_state.text = "recording"
+            recording_state.setTextColor(Color.RED)
         } else {
             button_record_toggle.background = getDrawable(resources, R.drawable.round_button, null)
+            recording_state.text = "paused"
+            // add theme to getColor so it isn't depricated
+            recording_state.setTextColor(ContextCompat.getColor(activity, R.color.colorPrimary))
         }
     }
 

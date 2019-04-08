@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addOnTabSelectedListener(
                 object : TabLayout.OnTabSelectedListener {
                     override fun onTabReselected(tab: TabLayout.Tab?) {
-                        viewPager.currentItem = tab?.position ?: 1
                     }
 
                     override fun onTabUnselected(tab: TabLayout.Tab?) {
