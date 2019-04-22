@@ -8,7 +8,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import java.util.*
 
-class SpeechRecognitionListener(context: Context, processedTextlistener: (String) -> Unit) {
+class SpeechRecognitionListener(context: Context, val processedTextlistener: (String) -> Unit) {
 
     companion object {
         private const val TIME_UNTIL_TIMEOUT = 50000
@@ -19,6 +19,7 @@ class SpeechRecognitionListener(context: Context, processedTextlistener: (String
 
     private val speechRecognizer: SpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
     private var startTime: Long = -1
+    private var speechText: String? = null
     private var totalCurrentSpeechDuration: Float = 0.0f
 
     init {
@@ -33,6 +34,11 @@ class SpeechRecognitionListener(context: Context, processedTextlistener: (String
     fun stopListening() {
         speechRecognizer.stopListening()
         totalCurrentSpeechDuration = ((System.currentTimeMillis() - startTime)/MS_TO_SECONDS).toFloat()
+    }
+
+    fun discard() {
+        speechRecognizer.stopListening()
+        totalCurrentSpeechDuration = 0f
     }
 
     private fun createRecognitionIntent(): Intent {
